@@ -1,11 +1,17 @@
 <ion-header>
   <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="home"></ion-back-button>
+    </ion-buttons>
     <ion-title>Pokémon hunt</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-button expand="full" (click)="centerMap()">
+  <app-map *ngIf="(coordinates$|async) as coords" [coords]="coords">
+
+  </app-map>
+  <!-- <ion-button expand="full" (click)="centerMap()">
     <ion-icon name="locate"></ion-icon>
     Center map
   </ion-button>
@@ -20,5 +26,5 @@
       {{worldPoke.name}}
       <ion-button [routerLink]="worldPoke.pokeIndex">View in pokédex</ion-button>
     </ion-item>
-  </ion-list>
+  </ion-list> -->
 </ion-content>
