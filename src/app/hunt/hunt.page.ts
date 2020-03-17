@@ -35,8 +35,11 @@ export class HuntPage implements OnInit {
             loader.dismiss();
             return null;
             // console.log(err)
-          })
-
+          });
+      })
+      .then(position => (position instanceof Error) ? this.presentAlert(position.message) : null)
+      .catch(err => {
+        this.presentAlert(err.message);
       })
   }
 
