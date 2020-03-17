@@ -6,8 +6,8 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class PokemonService {
-  private baseUrl = 'https://pokeapi.co/api/v2/';
-  private imageUrl = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
+  private baseUrl = 'https://pokeapi.co/api/v2';
+  private imageUrl = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon';
 
 
   constructor(private http: HttpClient) { 
@@ -15,7 +15,7 @@ export class PokemonService {
   }
 
   getPokemon(offset = 0){
-    return this.http.get(this.baseUrl + 'pokemon?offset=' + offset +'&limit=25').pipe(
+    return this.http.get(this.baseUrl + '/pokemon?offset=' + offset +'&limit=25').pipe(
       map(result =>{
         console.log(offset)
         return result['results'];
@@ -31,7 +31,29 @@ export class PokemonService {
   }
 
   getPokemonImage(index){
-    return `${this.imageUrl}${index}.png`;
+    return `${this.imageUrl}/${index}.png`;
+  }
+
+  findPokemon(search){
+    return this.http.get(`${this.baseUrl}/pokemon/${search}`).pipe(
+      map(pokemon => {
+        pokemon['image'] = this.getPokemonImage(pokemon['id']);
+        pokemon['pokeIndex'] = pokemon['id'];
+        return pokemon;
+      })
+    );
+  }
+
+  getPokeDetails(index){
+    return this.http.get(`${this.baseUrl}/pokemon/${index}`).pipe(
+      map(poke => {
+        let sprites = Object.keys(poke['sprites']);
+        poke['images'] = sprites
+          .map(spriteKey => poke['sprites'][spriteKey])
+          .filter(img => img);
+        return poke;
+      })
+    );
   }
 
 }
