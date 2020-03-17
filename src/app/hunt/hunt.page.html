@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Pokémon hunt</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-button expand="full" (click)="centerMap()">
+    <ion-icon name="locate"></ion-icon>
+    Center map
+  </ion-button>
+
+  <div #map id="map"></div>
+
+  <ion-list>
+    <ion-list-header>
+      <ion-label>Nearby Pokémon</ion-label>
+    </ion-list-header>
+    <ion-item *ngFor="let worldPoke of worldPokemon">
+      {{worldPoke.name}}
+      <ion-button [routerLink]="worldPoke.pokeIndex">View in pokédex</ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>
