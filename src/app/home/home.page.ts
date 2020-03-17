@@ -40,6 +40,7 @@ export class HomePage implements OnInit{
   onSearchChange(event){
     let value = event.detail.value;
     if(value == ''){
+      this.pokemon = [];
       this.offset = 0;
       this.loadPokemon();
       return;
