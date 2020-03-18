@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Platform, AlertController, NavController } from '@ionic/angular';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { PokemonService } from '../services/pokemon.service';
 
 declare var google;
 
@@ -20,7 +21,7 @@ export class HuntPage implements OnInit {
 
   positionSubscription: Subscription;
 
-  constructor(public navCtrl: NavController, private plt: Platform, private geolocation: Geolocation, private alertCtrl: AlertController) { 
+  constructor(public navCtrl: NavController, private plt: Platform, private geolocation: Geolocation, private alertCtrl: AlertController, private pokeService: PokemonService) { 
     // this.loadmap();
   }
 
@@ -54,7 +55,6 @@ export class HuntPage implements OnInit {
     this.geolocation.getCurrentPosition().then((resp) => {
       this.latitude = resp.coords.latitude
       this.longitude = resp.coords.longitude
-      // resp.coords.longitude
      }).catch((error) => {
        console.log('Error getting location', error);
      });
@@ -90,7 +90,21 @@ export class HuntPage implements OnInit {
         map: this.map,
         icon: this.worldPokemon[i].image
       });
+      marker.set('pokeIndex', this.worldPokemon[i].pokeIndex);
+      marker.set('pokeArrId', i);
+      marker.addListener('click', (event)=> {
+        // console.log(event);
+        const userPos = {latitude: this.latitude, longitude: this.longitude};
+        const pokeArrId = marker.get('pokeArrId');
+        const pokePos = {latitude: this.worldPokemon[pokeArrId].latitude, longitude: this.worldPokemon[pokeArrId].longitude};
+        const isClose = this.pokeService.isCloseEnough(pokePos, userPos);
+        console.log(isClose);
+      });
     }
   }
+
+
+
+
 
 }
