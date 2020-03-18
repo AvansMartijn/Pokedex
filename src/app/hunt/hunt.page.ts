@@ -98,6 +98,7 @@ export class HuntPage implements OnInit {
         const pokeArrId = marker.get('pokeArrId');
         const pokePos = {latitude: this.worldPokemon[pokeArrId].latitude, longitude: this.worldPokemon[pokeArrId].longitude};
         const isClose = this.pokeService.isCloseEnough(pokePos, userPos);
+        this.pokeService.catchPoke(marker.get('pokeIndex'));
         console.log(isClose);
       });
     }

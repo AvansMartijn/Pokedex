@@ -8,6 +8,7 @@ import { map } from 'rxjs/operators';
 export class PokemonService {
   private baseUrl = 'https://pokeapi.co/api/v2';
   private imageUrl = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon';
+  private caughtPokemon = [];
 
 
   constructor(private http: HttpClient) { 
@@ -65,6 +66,15 @@ export class PokemonService {
     const distance = this.getDistanceFromLatLonInMeter(pokePos.latitude, pokePos.longitude, userPos.latitude, userPos.longitude)
     console.log('distance: ' + distance);
     return (distance<maxDistance);
+  }
+
+  catchPoke(pokeIndex){
+    this.findPokemon(pokeIndex).subscribe(res => {
+      this.caughtPokemon.push(res);
+    }, err=>{
+      console.log(err);
+    });
+    console.log(this.caughtPokemon);
   }
 
   getDistanceFromLatLonInMeter(lat1, lon1, lat2, lon2) {
