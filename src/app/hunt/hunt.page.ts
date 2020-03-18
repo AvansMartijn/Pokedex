@@ -32,7 +32,7 @@ export class HuntPage implements OnInit {
   initMap(){
     const POSITION = {lat: this.latitude, lng: this.longitude};
     this.map = new google.maps.Map(document.getElementById('map'), {
-      zoom: 12,
+      zoom: 15,
       center: POSITION
     });
     const curPosition = new google.maps.LatLng(this.latitude, this.longitude);
@@ -72,6 +72,7 @@ export class HuntPage implements OnInit {
   updateMap(){
     const curPosition = new google.maps.LatLng(this.latitude, this.longitude);
     this.userMarker.setPosition(curPosition);
+    this.map.setCenter(curPosition);
     console.log('update map');
   }
 
