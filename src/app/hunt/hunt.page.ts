@@ -61,7 +61,11 @@ export class HuntPage implements OnInit {
   }
   
   setWatchPos(){
-    let watch = this.geolocation.watchPosition();
+    let watchOpts = {
+      enableHighAccuracy: true,
+      timeout: 1000
+    }
+    let watch = this.geolocation.watchPosition(watchOpts);
     watch.subscribe((data) => {
       this.latitude = data.coords.latitude
       this.longitude = data.coords.longitude

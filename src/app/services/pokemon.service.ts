@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
+import { Plugins } from '@capacitor/core';
+
+const { Storage } = Plugins;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -70,11 +74,27 @@ export class PokemonService {
 
   catchPoke(pokeIndex){
     this.findPokemon(pokeIndex).subscribe(res => {
-      this.caughtPokemon.push(res);
+      this.savePokemonInDb(res);
+      // this.caughtPokemon.push(res);
+
     }, err=>{
       console.log(err);
     });
-    console.log(this.caughtPokemon);
+    // console.log(this.caughtPokemon);
+  }
+
+  // JSON "set" example
+  async savePokemonInDb(pokemon) {
+    const key = this.caughtPokemon.length+1;
+    await Storage.set({
+      key: key.toString(),
+      value: JSON.stringify(pokemon)
+    });
+    this.updateCaughtPokemonList();
+  }
+
+  async updateCaughtPokemonList(){
+
   }
 
   getDistanceFromLatLonInMeter(lat1, lon1, lat2, lon2) {
