@@ -85,16 +85,45 @@ export class PokemonService {
 
   // JSON "set" example
   async savePokemonInDb(pokemon) {
-    const key = this.caughtPokemon.length+1;
+    const dateTime = Number(new Date());
+    const key = pokemon.pokeIndex + "_" + dateTime.toString();
     await Storage.set({
-      key: key.toString(),
+      key: key,
       value: JSON.stringify(pokemon)
+    }).catch(e => {
+      console.log("Je inventory zit vol, laat wat pokemon vrij");
     });
-    this.updateCaughtPokemonList();
+    const newList = await this.getCaughtPokemonFromDB().then(data => {
+      console.log(this.caughtPokemon);
+      this.freeAllPokemon();
+    });
   }
 
-  async updateCaughtPokemonList(){
+  async getCaughtPokemonFromDB(){
+    
+    const keys = await Storage.keys().then(async (data) => {
+      var newCaughtPokeList = [];
+      for(let i = 0; i < data.keys.length; i++){
+        // console.log(data.keys.length);
+        const poke = await Storage.get({ key: data.keys[i] });
+        // console.log(JSON.parse(poke.value));
+        const pokeData = JSON.parse(poke.value);
+        pokeData.lStorageKey = data.keys[i];
+        newCaughtPokeList.push(pokeData);
+      }
+      this.caughtPokemon = newCaughtPokeList;
+      // console.log()
+      // this.freeAllPokemon();
+      return this.caughtPokemon;
+    });
+  }
 
+  async freePoke(key){
+    await Storage.remove({ key: key });
+  }
+
+  async freeAllPokemon() {
+    await Storage.clear();
   }
 
   getDistanceFromLatLonInMeter(lat1, lon1, lat2, lon2) {
