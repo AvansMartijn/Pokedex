@@ -15,8 +15,8 @@ export class HuntPage implements OnInit {
   // @ViewChild('map', {static: false}) mapElement: ElementRef;
   map: any;
   userMarker: any;
-  latitude = 51.6850;
-  longitude = 5.8597;
+  latitude = 45.6850;
+  longitude = 45.8597;
   worldPokemon = [];
 
   positionSubscription: Subscription;
@@ -39,7 +39,8 @@ export class HuntPage implements OnInit {
     const curPosition = new google.maps.LatLng(this.latitude, this.longitude);
     this.userMarker = new google.maps.Marker({
       position: curPosition,
-      map: this.map
+      map: this.map,
+      zIndex: 100
     });
 
     this.loadWorldPokemon();
@@ -81,13 +82,42 @@ export class HuntPage implements OnInit {
   }
 
   loadWorldPokemon(){
-    this.worldPokemon = [
-      {name: "bulbasaur", url: "https://pokeapi.co/api/v2/pokemon/1/", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png", pokeIndex: 1, latitude: 51.689331, longitude: 5.861730},
-      {name: "ivysaur", url: "https://pokeapi.co/api/v2/pokemon/2/", image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/2.png", pokeIndex: 2, latitude: 51.687124, longitude: 5.862223}
-    ]
+    for(var i = 0; i < 10; i++){
+      this.getRandomPokeFromService();
+    }
 
-    for(var i = 0; i < this.worldPokemon.length; i++){
-      // console.log(this.worldPokemon[i]);
+    console.log("NEW WORLD POKE");
+    console.log(this.worldPokemon);
+
+  }
+
+  getRandomPokeFromService(){
+    this.pokeService.getRandomPoke((res) => {
+      console.log("succes");
+      console.log(res);
+
+      this.getCurPos();
+
+      let maxLat = this.latitude + 0.01
+      let minLat = this.latitude - 0.01
+      let maxLon = this.longitude + 0.01
+      let minLon = this.longitude - 0.01
+  
+      let pokeLat = (Math.random() * (maxLat - minLat) + minLat).toFixed(5);
+      let pokeLon = (Math.random() * (maxLon - minLon) + minLon).toFixed(5);
+      console.log("pokeLat:"+ pokeLat);
+      console.log("pokelon:"+ pokeLon);
+
+      let pokeImage = this.pokeService.getPokemonImage(res['id']);
+      let pokeUrl = `${this.pokeService.baseUrl}/pokemon/${res['id']}`
+      
+      let newWorldPoke = {name: res['name'], url: pokeUrl, image: pokeImage, pokeIndex: res['id'], latitude: pokeLat, longitude: pokeLon}
+      
+
+      this.worldPokemon.push(newWorldPoke);
+
+      let i = this.worldPokemon.length -1;  
+
       const pokePosition = new google.maps.LatLng(this.worldPokemon[i].latitude, this.worldPokemon[i].longitude);
       const marker = new google.maps.Marker({
         position: pokePosition,
@@ -105,7 +135,10 @@ export class HuntPage implements OnInit {
         this.pokeService.catchPoke(marker.get('pokeIndex'));
         console.log(isClose);
       });
-    }
+
+    }, (err) =>{
+      this.getRandomPokeFromService();
+    })
   }
 
 

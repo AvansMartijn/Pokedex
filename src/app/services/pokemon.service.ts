@@ -10,7 +10,7 @@ const { Storage } = Plugins;
   providedIn: 'root'
 })
 export class PokemonService {
-  private baseUrl = 'https://pokeapi.co/api/v2';
+  public baseUrl = 'https://pokeapi.co/api/v2';
   private imageUrl = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon';
   private caughtPokemon = [];
 
@@ -35,8 +35,25 @@ export class PokemonService {
     )
   }
 
+  
   getPokemonImage(index){
     return `${this.imageUrl}/${index}.png`;
+  }
+
+  getPokeCount(){
+    return this.http.get(this.baseUrl + "/pokemon");
+  }
+
+  getRandomPoke(fn, err){
+    this.getPokeCount().subscribe(res => {
+      let pokeCount = res['count'];
+      let pokeIndex = Math.floor(Math.random() * pokeCount) + 1  
+      this.http.get(`${this.baseUrl}/pokemon/${pokeIndex}`).subscribe(fn, err)
+    }, err=>{
+      console.log("FAILED, GET NEW ONE")
+      // this.getRandomPoke(fn);
+    });
+
   }
 
   findPokemon(search){
