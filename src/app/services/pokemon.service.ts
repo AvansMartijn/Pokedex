@@ -78,7 +78,7 @@ export class PokemonService {
   }
 
   isCloseEnough(pokePos, userPos){
-    const maxDistance = 4000;
+    const maxDistance = 100;
     // pokePos.lat
 
     // compare distance

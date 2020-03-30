@@ -3,6 +3,9 @@ import { Subscription } from 'rxjs';
 import { Platform, AlertController, NavController } from '@ionic/angular';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { PokemonService } from '../services/pokemon.service';
+import { Plugins } from '@capacitor/core';
+import { Vibration } from '@ionic-native/vibration/ngx';
+const { Toast } = Plugins;
 
 declare var google;
 
@@ -20,14 +23,19 @@ export class HuntPage implements OnInit {
   worldPokemon = [];
   worldPokeCounter = 0;
   pokeMarkers = [];
+  catchStarted = false;
+  vibrated = false;
+  catchSucces = false;
+  testcounter = 0;
 
   positionSubscription: Subscription;
 
-  constructor(public navCtrl: NavController, private plt: Platform, private geolocation: Geolocation, private alertCtrl: AlertController, private pokeService: PokemonService) { 
+  constructor(public navCtrl: NavController, private plt: Platform, private geolocation: Geolocation, private alertCtrl: AlertController, private pokeService: PokemonService, private vibration: Vibration) { 
     // this.loadmap();
   }
 
   ngAfterViewInit() {
+    this.getCurPos();
     this.initMap();
     this.setWatchPos();
   }
@@ -46,7 +54,7 @@ export class HuntPage implements OnInit {
     });
 
     this.loadWorldPokemon();
-
+    this.updateMap();
 
   }
 
@@ -63,6 +71,10 @@ export class HuntPage implements OnInit {
      });
   }
   
+  processCoords(lat, lon){
+    this.latitude = lat;
+    this.longitude = lon;
+  }
   setWatchPos(){
     let watchOpts = {
       enableHighAccuracy: true,
@@ -70,9 +82,9 @@ export class HuntPage implements OnInit {
     }
     let watch = this.geolocation.watchPosition(watchOpts);
     watch.subscribe((data) => {
-      this.latitude = data.coords.latitude
-      this.longitude = data.coords.longitude
-      this.checkPokemonDistance()
+      this.testcounter += 1;
+      this.processCoords(data.coords.latitude, data.coords.longitude);
+      this.checkPokemonDistance();
       if(this.worldPokeCounter < 10){
         this.getRandomPokeFromService();
       }
@@ -83,8 +95,12 @@ export class HuntPage implements OnInit {
 
   updateMap(){
     const curPosition = new google.maps.LatLng(this.latitude, this.longitude);
-    this.userMarker.setPosition(curPosition);
-    this.map.setCenter(curPosition);
+    if(this.userMarker != null){
+      this.userMarker.setPosition(curPosition);
+    }
+    if(this.map != null){
+      this.map.setCenter(curPosition);
+    }
   }
 
   loadWorldPokemon(){
@@ -115,12 +131,12 @@ export class HuntPage implements OnInit {
   getRandomPokeFromService(){
     this.pokeService.getRandomPoke((res) => {
 
-      this.getCurPos();
+      // this.getCurPos();
 
-      let maxLat = this.latitude + 0.01
-      let minLat = this.latitude - 0.01
-      let maxLon = this.longitude + 0.01
-      let minLon = this.longitude - 0.01
+      let maxLat = this.latitude + 0.005
+      let minLat = this.latitude - 0.005
+      let maxLon = this.longitude + 0.005
+      let minLon = this.longitude - 0.005
   
       let pokeLat = (Math.random() * (maxLat - minLat) + minLat).toFixed(5);
       let pokeLon = (Math.random() * (maxLon - minLon) + minLon).toFixed(5);
@@ -162,16 +178,73 @@ export class HuntPage implements OnInit {
         const userPos = {latitude: this.latitude, longitude: this.longitude};
         const pokeArrId = marker.get('pokeArrId');
         const pokePos = {latitude: this.worldPokemon[pokeArrId].latitude, longitude: this.worldPokemon[pokeArrId].longitude};
+        console.log(pokePos);
         const isClose = this.pokeService.isCloseEnough(pokePos, userPos);
-        this.pokeService.catchPoke(marker.get('pokeIndex'));
-        delete this.worldPokemon[i];
-        marker.setMap(null);
-        this.worldPokeCounter -= 1;
+        if(isClose){
+        if(this.catchStarted){
+          if(this.vibrated){
+            this.catchSucces = true;
+            this.vibrated = false;
+            this.pokeService.catchPoke(pokeArrId);
+            delete this.worldPokemon[i];
+            marker.setMap(null);
+            this.worldPokeCounter -= 1;
+            console.log("caught him");
+          }
+        }else{
+          this.catchPokemon(pokeArrId)
+        }
+      }else{
+        this.showToast("Too far away");
+      }
+        
       });
 
     }, (err) =>{
       this.getRandomPokeFromService();
     })
+  }
+
+  catchPokemon(pokeIndex){
+    this.catchStarted = true;
+    this.vibrated = false;
+
+    let timeArray = new Array(1000, 2000, 3000, 4000, 5000, 6000);
+    let randomTime = timeArray[Math.floor(timeArray.length * Math.random())];
+    var root = this;
+    setTimeout(
+      function() {
+        root.vibration.vibrate(1000);
+        root.vibrated = true;
+        console.log("vibrated");
+        setTimeout(
+          function() {
+            root.vibration.vibrate(1000);
+            root.vibrated = false;
+            root.catchStarted = false;
+            if(root.catchSucces){
+              root.showToast("Poké added to inventory");
+              
+            }else{
+              root.showToast("Failed to catch Poké");
+            }
+            root.catchSucces = false;
+            // console.log("time over");
+          }, 3000);
+      }, randomTime);
+
+    console.log("catching");
+    this.showToast("catching poke");
+    
+    return true;
+  }
+
+
+
+  async showToast(toastText) {
+    await Toast.show({
+      text: toastText
+    });
   }
 
 
