@@ -5,8 +5,6 @@
 </ion-header>
 
 <ion-content>
-  <ion-button href="/home">home</ion-button>
-  <ion-button href="/hunt">hunt</ion-button>
   <ion-list>
     <ion-item *ngFor="let poke of caughtPokemon;">
       <ion-avatar slot="start">
@@ -16,7 +14,7 @@
         <h2>{{poke.name}}</h2>
         <p>#{{poke.pokeIndex}}</p>
       </ion-label>
-      <ion-button color="tertiary" href="/tabs/tab-home/{{poke.pokeIndex}}">Pokédex</ion-button>
+      <ion-button color="tertiary" routerLink="/tabs/tab-home/{{poke.pokeIndex}}">Pokédex</ion-button>
       <ion-button (click)="freePoke(poke.lStorageKey)">Release</ion-button>
     </ion-item>
   </ion-list>

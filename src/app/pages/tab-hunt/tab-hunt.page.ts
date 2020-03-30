@@ -178,14 +178,14 @@ export class TabHuntPage implements OnInit {
         const userPos = {latitude: this.latitude, longitude: this.longitude};
         const pokeArrId = marker.get('pokeArrId');
         const pokePos = {latitude: this.worldPokemon[pokeArrId].latitude, longitude: this.worldPokemon[pokeArrId].longitude};
-        console.log(pokePos);
+        // console.log(this.worldPokemon[pokeArrId].name);
         const isClose = this.pokeService.isCloseEnough(pokePos, userPos);
         if(isClose){
         if(this.catchStarted){
           if(this.vibrated){
             this.catchSucces = true;
             this.vibrated = false;
-            this.pokeService.catchPoke(pokeArrId);
+            this.pokeService.catchPoke(this.worldPokemon[pokeArrId].pokeIndex);
             delete this.worldPokemon[i];
             marker.setMap(null);
             this.worldPokeCounter -= 1;
