@@ -26,7 +26,6 @@ export class HuntPage implements OnInit {
   catchStarted = false;
   vibrated = false;
   catchSucces = false;
-  testcounter = 0;
 
   positionSubscription: Subscription;
 
@@ -82,13 +81,15 @@ export class HuntPage implements OnInit {
     }
     let watch = this.geolocation.watchPosition(watchOpts);
     watch.subscribe((data) => {
-      this.testcounter += 1;
-      this.processCoords(data.coords.latitude, data.coords.longitude);
-      this.checkPokemonDistance();
-      if(this.worldPokeCounter < 10){
-        this.getRandomPokeFromService();
+      if(data.coords != undefined){
+        this.processCoords(data.coords.latitude, data.coords.longitude);
+        this.checkPokemonDistance();
+        if(this.worldPokeCounter < 10){
+          this.getRandomPokeFromService();
+        }
+        this.updateMap();
+
       }
-      this.updateMap();
 
     });
   }
