@@ -1,0 +1,45 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>
+      Pokédex
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-button href="/hunt">hunt</ion-button>
+  <ion-button href="/inventory">inventory</ion-button>
+  <ion-searchbar placeholder="Search pokémon" (ionChange)="onSearchChange($event)"></ion-searchbar>
+  <ion-list *ngIf="pokemon.length == 0">
+    <ion-item *ngFor="let i of [1,2,3]">
+      <ion-avatar slot="start">
+        <ion-skeleton-text animated></ion-skeleton-text>
+      </ion-avatar>
+      <ion-label class="ion-text-capitalize">
+        <h2>
+          <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+        </h2>
+        <p>
+          <ion-skeleton-text animated style="width: 20%;"></ion-skeleton-text>
+        </p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  <ion-list>
+    <ion-item *ngFor="let poke of pokemon;" [routerLink]="poke.pokeIndex">
+      <ion-avatar slot="start">
+        <img [src]="poke.image" style="background: #f2f2f2;">
+      </ion-avatar>
+      <ion-label class="ion-text-capitalize">
+        <h2>{{poke.name}}</h2>
+        <p>#{{poke.pokeIndex}}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-infinite-scroll (ionInfinite)="loadPokemon(true, $event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more...">
+
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>
