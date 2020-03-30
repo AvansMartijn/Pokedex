@@ -18,6 +18,8 @@ export class HuntPage implements OnInit {
   latitude = 45.6850;
   longitude = 45.8597;
   worldPokemon = [];
+  worldPokeCounter = 0;
+  pokeMarkers = [];
 
   positionSubscription: Subscription;
 
@@ -70,7 +72,12 @@ export class HuntPage implements OnInit {
     watch.subscribe((data) => {
       this.latitude = data.coords.latitude
       this.longitude = data.coords.longitude
+      this.checkPokemonDistance()
+      if(this.worldPokeCounter < 10){
+        this.getRandomPokeFromService();
+      }
       this.updateMap();
+
     });
   }
 
@@ -78,7 +85,6 @@ export class HuntPage implements OnInit {
     const curPosition = new google.maps.LatLng(this.latitude, this.longitude);
     this.userMarker.setPosition(curPosition);
     this.map.setCenter(curPosition);
-    console.log('update map');
   }
 
   loadWorldPokemon(){
@@ -86,15 +92,28 @@ export class HuntPage implements OnInit {
       this.getRandomPokeFromService();
     }
 
-    console.log("NEW WORLD POKE");
-    console.log(this.worldPokemon);
+  }
 
+  checkPokemonDistance(){
+    
+    for(let i = 0; i < this.worldPokemon.length; i++){
+      if(this.worldPokemon[i]){
+        let userLat = this.latitude;
+        let userLon = this.longitude;
+        let pokeLat = this.worldPokemon[i].latitude;
+        let pokelon = this.worldPokemon[i].longitude;
+        let distance = this.pokeService.getDistanceFromLatLonInMeter(userLat, userLon, pokeLat, pokelon);
+        if(distance > 20000){
+          delete this.worldPokemon[i]
+          this.worldPokeCounter -= 1;
+          this.pokeMarkers[i].setMap(null);
+        }
+      }
+    }    
   }
 
   getRandomPokeFromService(){
     this.pokeService.getRandomPoke((res) => {
-      console.log("succes");
-      console.log(res);
 
       this.getCurPos();
 
@@ -105,18 +124,28 @@ export class HuntPage implements OnInit {
   
       let pokeLat = (Math.random() * (maxLat - minLat) + minLat).toFixed(5);
       let pokeLon = (Math.random() * (maxLon - minLon) + minLon).toFixed(5);
-      console.log("pokeLat:"+ pokeLat);
-      console.log("pokelon:"+ pokeLon);
 
       let pokeImage = this.pokeService.getPokemonImage(res['id']);
       let pokeUrl = `${this.pokeService.baseUrl}/pokemon/${res['id']}`
       
       let newWorldPoke = {name: res['name'], url: pokeUrl, image: pokeImage, pokeIndex: res['id'], latitude: pokeLat, longitude: pokeLon}
-      
 
-      this.worldPokemon.push(newWorldPoke);
+      //todo: check for free spots in array
+      let i = null;
+      for(var x = 0; x < this.worldPokemon.length; x++){
+        // if there is a empty spot in array, fill that one
+          if(!this.worldPokemon[x]){
+            i = x;
+            this.worldPokemon[i] = newWorldPoke;
+            break;
+          }
+      }
+      //if pokemon has not been put in array yet, push to end
+      if(i == null){
+        this.worldPokemon.push(newWorldPoke);
+        i = this.worldPokemon.length -1;  
+      }
 
-      let i = this.worldPokemon.length -1;  
 
       const pokePosition = new google.maps.LatLng(this.worldPokemon[i].latitude, this.worldPokemon[i].longitude);
       const marker = new google.maps.Marker({
@@ -124,8 +153,10 @@ export class HuntPage implements OnInit {
         map: this.map,
         icon: this.worldPokemon[i].image
       });
+      this.pokeMarkers[i] = marker;
       marker.set('pokeIndex', this.worldPokemon[i].pokeIndex);
       marker.set('pokeArrId', i);
+      this.worldPokeCounter += 1;
       marker.addListener('click', (event)=> {
         // console.log(event);
         const userPos = {latitude: this.latitude, longitude: this.longitude};
@@ -133,7 +164,9 @@ export class HuntPage implements OnInit {
         const pokePos = {latitude: this.worldPokemon[pokeArrId].latitude, longitude: this.worldPokemon[pokeArrId].longitude};
         const isClose = this.pokeService.isCloseEnough(pokePos, userPos);
         this.pokeService.catchPoke(marker.get('pokeIndex'));
-        console.log(isClose);
+        delete this.worldPokemon[i];
+        marker.setMap(null);
+        this.worldPokeCounter -= 1;
       });
 
     }, (err) =>{

@@ -22,7 +22,6 @@ export class PokemonService {
   getPokemon(offset = 0){
     return this.http.get(this.baseUrl + '/pokemon?offset=' + offset +'&limit=25').pipe(
       map(result =>{
-        console.log(offset)
         return result['results'];
       }),
       map(pokemons =>{
@@ -81,11 +80,9 @@ export class PokemonService {
   isCloseEnough(pokePos, userPos){
     const maxDistance = 4000;
     // pokePos.lat
-    console.log('pokePos: lat:' + pokePos.latitude + 'lon:' + pokePos.longitude);
-    console.log('userPos: lat:' + userPos.latitude + 'lon:' + userPos.longitude);
+
     // compare distance
     const distance = this.getDistanceFromLatLonInMeter(pokePos.latitude, pokePos.longitude, userPos.latitude, userPos.longitude)
-    console.log('distance: ' + distance);
     return (distance<maxDistance);
   }
 
