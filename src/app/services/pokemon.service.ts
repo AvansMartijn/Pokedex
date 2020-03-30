@@ -109,7 +109,7 @@ export class PokemonService {
     });
     const newList = await this.getCaughtPokemonFromDB().then(data => {
       console.log(this.caughtPokemon);
-      this.freeAllPokemon();
+      // this.freeAllPokemon();
     });
   }
 
@@ -130,10 +130,13 @@ export class PokemonService {
       // this.freeAllPokemon();
       return this.caughtPokemon;
     });
+    return this.caughtPokemon;
+
   }
 
   async freePoke(key){
     await Storage.remove({ key: key });
+    return await this.getCaughtPokemonFromDB();
   }
 
   async freeAllPokemon() {
