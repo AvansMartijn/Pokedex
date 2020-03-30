@@ -8,10 +8,6 @@ const routes: Routes = [
     path: 'hunt',
     loadChildren: () => import('./hunt/hunt.module').then( m => m.HuntPageModule)
   },
-  {
-    path: 'inventory',
-    loadChildren: () => import('./inventory/inventory.module').then( m => m.InventoryPageModule)
-  },
 
 ];
 
