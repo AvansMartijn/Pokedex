@@ -8,6 +8,8 @@ import { TabHuntPageRoutingModule } from './tab-hunt-routing.module';
 
 import { TabHuntPage } from './tab-hunt.page';
 
+import { Geolocation } from '@ionic-native/geolocation/ngx';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -15,6 +17,7 @@ import { TabHuntPage } from './tab-hunt.page';
     IonicModule,
     TabHuntPageRoutingModule
   ],
-  declarations: [TabHuntPage]
+  declarations: [TabHuntPage],
+  providers: [Geolocation]
 })
 export class TabHuntPageModule {}

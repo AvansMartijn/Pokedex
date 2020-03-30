@@ -9,12 +9,6 @@ import { HuntPageRoutingModule } from './hunt-routing.module';
 import { HuntPage } from './hunt.page';
 
 import { Geolocation } from '@ionic-native/geolocation/ngx';
-// import { IonicStorageModule } from '@ionic/storage';
-// import { Plugins } from '@capacitor/core';
-
-// const { Storage } = Plugins;
-
-
 
 @NgModule({
   imports: [
