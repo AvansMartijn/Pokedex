@@ -29,7 +29,7 @@
         <h2>{{poke.name}}</h2>
         <p>#{{poke.pokeIndex}}</p>
       </ion-label>
-      <ion-button color="tertiary" routerLink="/tabs/tab-home/{{poke.pokeIndex}}"><ion-icon slot="icon-only" name="search"></ion-icon></ion-button>
+      <ion-button color="tertiary" routerLink="/members/tabs/tab-home/{{poke.pokeIndex}}"><ion-icon slot="icon-only" name="search"></ion-icon></ion-button>
       <ion-button color="tertiary" (click)="openPopover($event, poke.lStorageKey)"><ion-icon slot="icon-only" name="text"></ion-icon></ion-button>
       <ion-button (click)="freePoke(poke.lStorageKey)"><ion-icon slot="icon-only" name="trash"></ion-icon></ion-button>
       <ion-reorder></ion-reorder>
