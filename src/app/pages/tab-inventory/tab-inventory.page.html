@@ -10,6 +10,15 @@
 </ion-header>
 
 <ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+    pullingIcon="arrow-dropdown"
+    pullingText="Pull to refresh"
+    refreshingSpinner="crescent"
+    >
+    </ion-refresher-content>
+  </ion-refresher>
+    
   <ion-list>
     <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="true">
     <ion-item *ngFor="let poke of caughtPokemon;">
@@ -27,5 +36,4 @@
     </ion-item>
     </ion-reorder-group>
   </ion-list>
-  
 </ion-content>

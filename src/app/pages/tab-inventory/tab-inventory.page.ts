@@ -40,8 +40,6 @@ export class TabInventoryPage implements OnInit {
       event: ev
     });
 
-   
-
     return await popOver.present();
 
   }
@@ -56,6 +54,15 @@ export class TabInventoryPage implements OnInit {
 
   toggleReorderGroup() {
     this.reorderGroup.disabled = !this.reorderGroup.disabled;
+  }
+
+  async doRefresh(event) {
+    const newList = await this.pokeService.getCaughtPokemonFromDB();
+    setTimeout(() => {
+      this.caughtPokemon = newList;
+      console.log('Async operation has ended');
+      event.target.complete();
+    }, 2000);
   }
 
 
