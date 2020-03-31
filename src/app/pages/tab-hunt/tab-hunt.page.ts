@@ -98,6 +98,13 @@ export class TabHuntPage implements OnInit {
     if(this.userMarker != null){
       this.userMarker.setPosition(curPosition);
     }
+
+    this.centerMap();
+   
+  }
+
+  centerMap(){
+    const curPosition = new google.maps.LatLng(this.latitude, this.longitude);
     if(this.map != null){
       this.map.setCenter(curPosition);
     }

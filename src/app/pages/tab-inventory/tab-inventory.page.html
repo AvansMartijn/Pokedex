@@ -6,7 +6,9 @@
 
 <ion-content>
   <ion-list>
-    <ion-item *ngFor="let poke of caughtPokemon;">
+    <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="false">
+    <ion-reorder *ngFor="let poke of caughtPokemon;">
+      <ion-item>
       <ion-avatar slot="start">
         <img [src]="poke.image" style="background: #f2f2f2;">
       </ion-avatar>
@@ -18,6 +20,8 @@
       <ion-button color="tertiary" (click)="openPopover($event, poke.lStorageKey)">Rename</ion-button>
       <ion-button (click)="freePoke(poke.lStorageKey)">Release</ion-button>
     </ion-item>
+    </ion-reorder>
+    </ion-reorder-group>
   </ion-list>
   
 </ion-content>

@@ -39,8 +39,18 @@ export class TabInventoryPage implements OnInit {
       event: ev
     });
 
+   
+
     return await popOver.present();
 
+  }
+
+  async doReorder(event){
+    console.log(event);
+    event.detail.complete();
+    let itemToMove = this.caughtPokemon.splice(event.detail.from, 1)[0];
+    this.caughtPokemon.splice(event.detail.to, 0, itemToMove);
+    await this.pokeService.reorderCaughtPokemon(this.caughtPokemon);
   }
 
 

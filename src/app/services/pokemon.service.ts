@@ -77,6 +77,7 @@ export class PokemonService {
     );
   }
 
+
   isCloseEnough(pokePos, userPos){
     const maxDistance = 300;
     // pokePos.lat
@@ -98,63 +99,136 @@ export class PokemonService {
   }
 
   // JSON "set" example
+  // async savePokemonInDbBU(pokemon) {
+  //   const dateTime = Number(new Date());
+  //   const key = pokemon.pokeIndex + "_" + dateTime.toString();
+  //   await Storage.set({
+  //     key: key,
+  //     value: JSON.stringify(pokemon)
+  //   }).catch(e => {
+  //     console.log("Je inventory zit vol, laat wat pokemon vrij");
+  //   });
+  //   const newList = await this.getCaughtPokemonFromDB().then(data => {
+  //     // console.log(this.caughtPokemon);
+  //     // this.freeAllPokemon();
+  //   });
+  // }
+
+    // JSON "set" example
   async savePokemonInDb(pokemon) {
-    const dateTime = Number(new Date());
-    const key = pokemon.pokeIndex + "_" + dateTime.toString();
-    await Storage.set({
-      key: key,
-      value: JSON.stringify(pokemon)
-    }).catch(e => {
-      console.log("Je inventory zit vol, laat wat pokemon vrij");
-    });
-    const newList = await this.getCaughtPokemonFromDB().then(data => {
-      // console.log(this.caughtPokemon);
-        // this.freeAllPokemon();
-    });
+    // const dateTime = Number(new Date());
+    const newPokeKey = this.caughtPokemon.length;
+    pokemon.lStorageKey = newPokeKey;
+    this.caughtPokemon.push(pokemon);
+
+    await this.savePokemonListInDb();
+    // const newList = await this.getCaughtPokemonFromDB().then(data => {
+    //   // console.log(this.caughtPokemon);
+    //   // this.freeAllPokemon();
+    // });
   }
 
+
+
+  // async getCaughtPokemonFromDBBU(){
+  //   const keys = await Storage.keys().then(async (data) => {
+  //     var newCaughtPokeList = [];
+  //     for(let i = 0; i < data.keys.length; i++){
+  //       // console.log(data.keys.length);
+  //       const poke = await Storage.get({ key: data.keys[i] });
+  //       // console.log(JSON.parse(poke.value));
+  //       const pokeData = JSON.parse(poke.value);
+  //       pokeData.lStorageKey = data.keys[i];
+  //       newCaughtPokeList.push(pokeData);
+  //     }
+  //     this.caughtPokemon = newCaughtPokeList;
+  //     // console.log()
+  //     // this.freeAllPokemon();
+  //     return this.caughtPokemon;
+  //   });
+  //   return this.caughtPokemon;
+
+  // }
+
   async getCaughtPokemonFromDB(){
-    
-    const keys = await Storage.keys().then(async (data) => {
+    await Storage.get({key: "pokeList"}).then(async (data) => {
       var newCaughtPokeList = [];
-      for(let i = 0; i < data.keys.length; i++){
-        // console.log(data.keys.length);
-        const poke = await Storage.get({ key: data.keys[i] });
-        // console.log(JSON.parse(poke.value));
-        const pokeData = JSON.parse(poke.value);
-        pokeData.lStorageKey = data.keys[i];
-        newCaughtPokeList.push(pokeData);
+      console.log(data);
+      if(data.value != null){
+
+        var pokeDbList = JSON.parse(data.value);
+        for(let i = 0; i < pokeDbList.pokelist.length; i++){
+          // console.log(data.keys.length);
+          const pokeRecord = pokeDbList.pokelist[i];
+          // console.log(JSON.parse(poke.value));
+          newCaughtPokeList.push(pokeRecord);
+        }
+        this.caughtPokemon = newCaughtPokeList;
+        // console.log()
+        // this.freeAllPokemon();
+        return this.caughtPokemon;
       }
-      this.caughtPokemon = newCaughtPokeList;
-      // console.log()
-      // this.freeAllPokemon();
-      return this.caughtPokemon;
     });
     return this.caughtPokemon;
 
   }
 
   async updatePokeName(key, newName){
-    const poke = await Storage.get({key: key});
-    let pokeData = JSON.parse(poke.value);
-    pokeData.name = newName
-    await Storage.set({
-      key: key,
-      value: JSON.stringify(pokeData)
-    }).catch(e => {
-      console.log("Je inventory zit vol, laat wat pokemon vrij");
-      return false;
+    await Storage.get({key: "pokeList"}).then(async (result) => {
+      const objResult = JSON.parse(result.value);
+      const pokeList = objResult.pokelist
+      var newCaughtPokemonList = []
+      for(let i = 0; i < pokeList.length; i++){
+        if(pokeList[i].lStorageKey == key){
+          pokeList[i].name = newName;
+        }
+        newCaughtPokemonList.push(pokeList[i]);
+      }
+      this.caughtPokemon = newCaughtPokemonList;
+      await this.savePokemonListInDb();
+      
     });
     return true;
   }
 
+  async reorderCaughtPokemon(newList){
+    this.caughtPokemon = newList;
+    await this.savePokemonListInDb();
+  }
+
   async freePoke(key){
-    await Storage.remove({ key: key });
-    return await this.getCaughtPokemonFromDB();
+    await Storage.get({key: "pokeList"}).then(async (result) => {
+      const objResult = JSON.parse(result.value);
+      const pokeList = objResult.pokelist
+      var newCaughtPokemonList = []
+      for(let i = 0; i < pokeList.length; i++){
+        let oldKey = pokeList[i].lStorageKey;
+        pokeList[i].lStorageKey = i;
+        if(key != oldKey){
+          newCaughtPokemonList.push(pokeList[i]);
+        }
+      }
+      this.caughtPokemon = newCaughtPokemonList;
+      await this.savePokemonListInDb();
+      
+    });
+    return this.caughtPokemon;
+  }
+
+  async savePokemonListInDb(){
+    let data = {pokelist: this.caughtPokemon};
+    const key = "pokeList";
+    await Storage.set({
+      key: key,
+      value: JSON.stringify(data)
+    }).catch(e => {
+      console.log("Je inventory zit vol, laat wat pokemon vrij");
+    });
   }
 
   async freeAllPokemon() {
-    await Storage.clear();
+    await Storage.remove({ key: "pokeList"})
+    
   }
 
   getDistanceFromLatLonInMeter(lat1, lon1, lat2, lon2) {
