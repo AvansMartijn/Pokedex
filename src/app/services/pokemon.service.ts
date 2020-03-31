@@ -108,8 +108,8 @@ export class PokemonService {
       console.log("Je inventory zit vol, laat wat pokemon vrij");
     });
     const newList = await this.getCaughtPokemonFromDB().then(data => {
-      console.log(this.caughtPokemon);
-      // this.freeAllPokemon();
+      // console.log(this.caughtPokemon);
+        // this.freeAllPokemon();
     });
   }
 
@@ -132,6 +132,20 @@ export class PokemonService {
     });
     return this.caughtPokemon;
 
+  }
+
+  async updatePokeName(key, newName){
+    const poke = await Storage.get({key: key});
+    let pokeData = JSON.parse(poke.value);
+    pokeData.name = newName
+    await Storage.set({
+      key: key,
+      value: JSON.stringify(pokeData)
+    }).catch(e => {
+      console.log("Je inventory zit vol, laat wat pokemon vrij");
+      return false;
+    });
+    return true;
   }
 
   async freePoke(key){

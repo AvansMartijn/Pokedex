@@ -15,6 +15,7 @@
         <p>#{{poke.pokeIndex}}</p>
       </ion-label>
       <ion-button color="tertiary" routerLink="/tabs/tab-home/{{poke.pokeIndex}}">Pokédex</ion-button>
+      <ion-button color="tertiary" (click)="openPopover($event, poke.lStorageKey)">Rename</ion-button>
       <ion-button (click)="freePoke(poke.lStorageKey)">Release</ion-button>
     </ion-item>
   </ion-list>

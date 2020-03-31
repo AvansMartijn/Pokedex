@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PokemonService } from '../../services/pokemon.service';
+import { PopoverComponent } from '../../components/popover/popover.component';
+import { PopoverController } from '@ionic/angular';
 
 
 @Component({
@@ -10,7 +12,7 @@ import { PokemonService } from '../../services/pokemon.service';
 export class TabInventoryPage implements OnInit {
   caughtPokemon = [];
 
-  constructor(private pokeService: PokemonService) { }
+  constructor(private pokeService: PokemonService, public popoverController: PopoverController) { }
 
   ngOnInit() {
     this.updateCaughtPokemon();
@@ -27,5 +29,20 @@ export class TabInventoryPage implements OnInit {
     this.caughtPokemon = newList;
 
   }
+
+  async openPopover(ev: Event, dbKey){
+    const popOver = await this.popoverController.create({
+      component: PopoverComponent,
+      componentProps: {
+        dbKey: dbKey
+      },
+      event: ev
+    });
+
+    return await popOver.present();
+
+  }
+
+
 
 }

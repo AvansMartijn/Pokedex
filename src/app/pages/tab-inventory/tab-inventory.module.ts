@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { TabInventoryPageRoutingModule } from './tab-inventory-routing.module';
 
 import { TabInventoryPage } from './tab-inventory.page';
+import { PopoverComponent } from 'src/app/components/popover/popover.component';
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import { TabInventoryPage } from './tab-inventory.page';
     IonicModule,
     TabInventoryPageRoutingModule
   ],
-  declarations: [TabInventoryPage]
+  declarations: [TabInventoryPage, PopoverComponent],
+  entryComponents: [PopoverComponent]
 })
 export class TabInventoryPageModule {}
