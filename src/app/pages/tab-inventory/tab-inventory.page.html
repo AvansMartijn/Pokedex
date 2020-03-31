@@ -1,14 +1,18 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>inventory</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleReorderGroup()">
+        <ion-icon slot="icon-only" name="reorder-three"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-list>
-    <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="false">
-    <ion-reorder *ngFor="let poke of caughtPokemon;">
-      <ion-item>
+    <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="true">
+    <ion-item *ngFor="let poke of caughtPokemon;">
       <ion-avatar slot="start">
         <img [src]="poke.image" style="background: #f2f2f2;">
       </ion-avatar>
@@ -16,11 +20,11 @@
         <h2>{{poke.name}}</h2>
         <p>#{{poke.pokeIndex}}</p>
       </ion-label>
-      <ion-button color="tertiary" routerLink="/tabs/tab-home/{{poke.pokeIndex}}">Pokédex</ion-button>
-      <ion-button color="tertiary" (click)="openPopover($event, poke.lStorageKey)">Rename</ion-button>
-      <ion-button (click)="freePoke(poke.lStorageKey)">Release</ion-button>
+      <ion-button color="tertiary" routerLink="/tabs/tab-home/{{poke.pokeIndex}}"><ion-icon slot="icon-only" name="search"></ion-icon></ion-button>
+      <ion-button color="tertiary" (click)="openPopover($event, poke.lStorageKey)"><ion-icon slot="icon-only" name="text"></ion-icon></ion-button>
+      <ion-button (click)="freePoke(poke.lStorageKey)"><ion-icon slot="icon-only" name="trash"></ion-icon></ion-button>
+      <ion-reorder></ion-reorder>
     </ion-item>
-    </ion-reorder>
     </ion-reorder-group>
   </ion-list>
   

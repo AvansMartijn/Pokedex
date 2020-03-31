@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { PokemonService } from '../../services/pokemon.service';
 import { PopoverComponent } from '../../components/popover/popover.component';
-import { PopoverController } from '@ionic/angular';
+import { PopoverController, IonReorderGroup } from '@ionic/angular';
 
 
 @Component({
@@ -10,6 +10,7 @@ import { PopoverController } from '@ionic/angular';
   styleUrls: ['./tab-inventory.page.scss'],
 })
 export class TabInventoryPage implements OnInit {
+  @ViewChild(IonReorderGroup, {static: false}) reorderGroup: IonReorderGroup;
   caughtPokemon = [];
 
   constructor(private pokeService: PokemonService, public popoverController: PopoverController) { }
@@ -47,10 +48,14 @@ export class TabInventoryPage implements OnInit {
 
   async doReorder(event){
     console.log(event);
-    event.detail.complete();
     let itemToMove = this.caughtPokemon.splice(event.detail.from, 1)[0];
     this.caughtPokemon.splice(event.detail.to, 0, itemToMove);
     await this.pokeService.reorderCaughtPokemon(this.caughtPokemon);
+    event.detail.complete();
+  }
+
+  toggleReorderGroup() {
+    this.reorderGroup.disabled = !this.reorderGroup.disabled;
   }
 
 
