@@ -1,6 +1,5 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="primary">
-    <ion-button color="tertiary" (click)="logout()"><ion-icon slot="icon-only" name="exit"></ion-icon></ion-button>
     <ion-title>
       Pokédex
     </ion-title>
@@ -41,4 +40,14 @@
 
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
+
+  <ion-fab vertical="center" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="exit"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="start">
+      <ion-fab-button (click)="logout()"><ion-icon name="exit"></ion-icon></ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+
 </ion-content>
