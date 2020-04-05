@@ -1,0 +1,14 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+        <ion-back-button defaultHref="/login"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Register</ion-title>
+  </ion-toolbar>
+</ion-header>
+ 
+<ion-content padding>
+  <ion-input [(ngModel)]="username" placeholder="Username"></ion-input>
+  <ion-input [(ngModel)]="password" placeholder="Password"></ion-input>
+  <ion-button (click)="register()" expand="block">Register</ion-button>
+</ion-content>

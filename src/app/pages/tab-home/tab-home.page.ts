@@ -1,24 +1,21 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { PokemonService } from '../services/pokemon.service';
+import { PokemonService } from '../../services/pokemon.service';
 import { IonInfiniteScroll } from '@ionic/angular';
-
+import { AuthenticationService } from 'src/app/services/authentication.service';
 @Component({
-  selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  selector: 'app-tab-home',
+  templateUrl: './tab-home.page.html',
+  styleUrls: ['./tab-home.page.scss'],
 })
-export class HomePage implements OnInit{
+export class TabHomePage implements OnInit {
   offset = 0;
   pokemon = [];
   @ViewChild(IonInfiniteScroll, {static: false}) infinite: IonInfiniteScroll;
-
-  constructor(private pokeService: PokemonService) {
-  }
+  constructor(private pokeService: PokemonService, private authService: AuthenticationService) { }
 
   ngOnInit(): void {
     this.loadPokemon();
   }
-
   loadPokemon(loadMore = false, event?){
     if(loadMore){
       this.offset+=25;
@@ -52,6 +49,10 @@ export class HomePage implements OnInit{
     }, err=>{
       this.pokemon = []
     });
+  }
+
+  logout(){
+     this.authService.logout();
   }
 
 }
