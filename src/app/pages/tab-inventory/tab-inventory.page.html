@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>inventory</ion-title>
+    <ion-title>Inventory</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="toggleReorderGroup()">
         <ion-icon slot="icon-only" name="reorder-three"></ion-icon>
@@ -12,7 +12,6 @@
 <ion-content>
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content
-    pullingIcon="arrow-dropdown"
     pullingText="Pull to refresh"
     refreshingSpinner="crescent"
     >

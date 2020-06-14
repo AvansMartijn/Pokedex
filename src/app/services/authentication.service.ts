@@ -37,7 +37,7 @@ export class AuthenticationService {
           this.authenticationState.next(true);
         });
       }else{
-        console.log("wrong creds");
+        console.log("Wrong Credentials");
       }
     })
     

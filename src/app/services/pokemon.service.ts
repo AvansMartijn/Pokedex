@@ -45,7 +45,8 @@ export class PokemonService {
 
   getRandomPoke(fn, err){
     this.getPokeCount().subscribe(res => {
-      let pokeCount = res['count'];
+      // let pokeCount = res['count'];
+      let pokeCount = 150;
       let pokeIndex = Math.floor(Math.random() * pokeCount) + 1  
       this.http.get(`${this.baseUrl}/pokemon/${pokeIndex}`).subscribe(fn, err)
     }, err=>{
